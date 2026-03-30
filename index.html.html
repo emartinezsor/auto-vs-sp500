@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Auto o S&P 500? | Ecuador</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131c;
+    --surface2: #1c1c2a;
+    --border: #2a2a3d;
+    --accent: #f0e040;
+    --accent2: #40e0b0;
+    --red: #ff5555;
+    --green: #50fa7b;
+    --muted: #6e6e8a;
+    --text: #e8e8f0;
+    --text2: #b0b0c8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ---- HEADER ---- */
+  header {
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(240,224,64,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    opacity: 0.85;
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--text);
+  }
+  h1 span { color: var(--accent); }
+  .subtitle {
+    margin-top: 0.75rem;
+    color: var(--text2);
+    font-size: 1rem;
+    font-weight: 300;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ---- LAYOUT ---- */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  @media (max-width: 768px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---- CARDS ---- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #3a3a55; }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .card-title::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* ---- FORM ELEMENTS ---- */
+  .field { margin-bottom: 1.1rem; }
+  label {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--text2);
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+  }
+  .input-wrap { position: relative; }
+  .prefix {
+    position: absolute;
+    left: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    pointer-events: none;
+  }
+  input[type="number"], select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    padding: 0.65rem 0.85rem;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input[type="number"].has-prefix { padding-left: 28px; }
+  input[type="number"]:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(240,224,64,0.08);
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236e6e8a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+  select option { background: var(--surface2); }
+
+  /* ---- SLIDER ---- */
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(240,224,64,0.5);
+  }
+  .slider-val {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    min-width: 48px;
+    text-align: right;
+  }
+
+  /* ---- CAR SELECTOR ---- */
+  .car-tabs {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text2);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .tab-btn.active {
+    background: rgba(240,224,64,0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .car-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.6rem;
+    max-height: 240px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .car-grid::-webkit-scrollbar { width: 4px; }
+  .car-grid::-webkit-scrollbar-track { background: transparent; }
+  .car-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .car-card {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem 0.6rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .car-card:hover { border-color: rgba(240,224,64,0.4); }
+  .car-card.selected {
+    border-color: var(--accent);
+    background: rgba(240,224,64,0.07);
+  }
+  .car-icon { font-size: 1.4rem; margin-bottom: 0.2rem; }
+  .car-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .car-price {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  /* ---- DIVIDER ---- */
+  .divider {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0.5rem 0;
+  }
+
+  /* ---- RESULTS ---- */
+  .results-section {
+    margin-top: 1.5rem;
+    display: none;
+  }
+  .results-section.visible { display: block; }
+
+  /* Impact banner */
+  .impact-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.25rem;
+    text-align: center;
+  }
+  .impact-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+  .impact-headline {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.35;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .impact-headline em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .impact-headline .sp-hl { color: var(--green); }
+  .impact-headline .car-hl { color: var(--red); }
+
+  /* Two-column comparison */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    margin-bottom: 1.25rem;
+    align-items: stretch;
+  }
+  @media (max-width: 650px) {
+    .compare-grid {
+      grid-template-columns: 1fr;
+    }
+    .compare-vs { flex-direction: row; padding: 0.5rem 0; }
+    .vs-line { flex: 1; height: 1px; width: auto !important; }
+    .vs-badge { margin: 0 1rem; }
+  }
+
+  .compare-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .compare-col--car {
+    border-color: rgba(255,85,85,0.3);
+    background: linear-gradient(160deg, rgba(255,85,85,0.04) 0%, var(--surface) 60%);
+  }
+  .compare-col--sp {
+    border-color: rgba(80,250,123,0.3);
+    background: linear-gradient(160deg, rgba(80,250,123,0.04) 0%, var(--surface) 60%);
+  }
+
+  .compare-col-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .compare-col-icon { font-size: 1.4rem; }
+  .compare-col-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .compare-hero-number {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(2.4rem, 5vw, 3.4rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+  .compare-col--car .compare-hero-number { color: var(--red); }
+  .compare-col--sp  .compare-hero-number { color: var(--green); }
+
+  .compare-hero-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+    line-height: 1.4;
+  }
+
+  .compare-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: auto;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .cmetric {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .cmetric-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .cmetric-value {
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .cmetric-value.neg { color: var(--red); }
+  .cmetric-value.pos { color: var(--green); }
+  .cmetric-value.neu { color: var(--text2); }
+  .cmetric-value.yel { color: var(--accent); }
+
+  /* VS divider */
+  .compare-vs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+    gap: 0.5rem;
+  }
+  .vs-line {
+    width: 1px;
+    flex: 1;
+    background: var(--border);
+  }
+  .vs-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 40px; height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Difference callout */
+  .difference-callout {
+    border-radius: 16px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.25rem;
+    text-align: center;
+    border: 2px solid;
+  }
+  .diff-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
+  }
+  .diff-number {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.6rem;
+  }
+  .diff-message {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.85;
+  }
+
+  /* ---- CHART ---- */
+  .chart-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .chart-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text2);
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.05em;
+  }
+  canvas { width: 100% !important; }
+
+  /* ---- BUTTON ---- */
+  .btn-calc {
+    width: 100%;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 0.9rem 2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+    grid-column: 1 / -1;
+    text-transform: uppercase;
+  }
+  .btn-calc:hover {
+    background: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(240,224,64,0.2);
+  }
+  .btn-calc:active { transform: translateY(0); }
+
+  /* ---- BREAKDOWN TABLE ---- */
+  .breakdown {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    font-size: 0.88rem;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid rgba(42,42,61,0.5);
+    color: var(--text2);
+  }
+  td:last-child { text-align: right; font-family: 'Inter', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; font-weight: 600; color: var(--text); }
+  .td-red { color: var(--red) !important; }
+  .td-green { color: var(--green) !important; }
+
+  /* ---- DISCLAIMER ---- */
+  .disclaimer {
+    font-size: 0.73rem;
+    color: var(--muted);
+    text-align: center;
+    padding: 1.5rem 1rem 0;
+    line-height: 1.7;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  /* ---- SP500 badge ---- */
+  .sp-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(80,250,123,0.1);
+    border: 1px solid rgba(80,250,123,0.25);
+    border-radius: 6px;
+    padding: 0.2rem 0.6rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--green);
+  }
+  .tooltip {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+    font-style: italic;
+  }
+  .section-sep {
+    margin: 1.75rem 0 1rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-sep::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  /* ---- SOURCES ---- */
+  .source-card {
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: pointer;
+  }
+  .source-card:hover {
+    border-color: var(--accent);
+    background: rgba(240,224,64,0.04);
+  }
+  .source-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .source-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 0.2rem;
+  }
+  .source-org {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.35rem;
+  }
+  .source-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Calculadora · Ecuador · 2024</p>
+  <h1>¿Auto nuevo<br>o <span>S&P 500</span>?</h1>
+  <p class="subtitle">Compara el costo real de tener un carro vs. invertir ese dinero mensualmente en el mercado.</p>
+</header>
+
+<div class="container">
+
+  <!-- ===== CAR SELECTOR ===== -->
+  <div class="section-sep">Elige tu vehículo</div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-title">Modelos más vendidos en Ecuador (2024)</div>
+    <div class="car-tabs" id="segmentTabs">
+      <button class="tab-btn active" onclick="filterCars('suv')">SUV</button>
+      <button class="tab-btn" onclick="filterCars('sedan')">Sedán</button>
+      <button class="tab-btn" onclick="filterCars('camioneta')">Camioneta</button>
+    </div>
+    <div class="car-grid" id="carGrid"></div>
+  </div>
+
+  <!-- ===== INPUTS ===== -->
+  <div class="section-sep">Parámetros del crédito y gastos</div>
+  <div class="grid">
+
+    <!-- CRÉDITO -->
+    <div class="card">
+      <div class="card-title">Crédito vehicular</div>
+
+      <div class="field">
+        <label>Precio del vehículo (USD)</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="carPrice" class="has-prefix" value="22000" min="5000" max="80000" oninput="syncPrice()">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Entrada inicial (%)</label>
+        <div class="slider-row">
+          <input type="range" id="downPct" min="10" max="50" value="30" step="5" oninput="syncDown()">
+          <span class="slider-val" id="downPctVal">30%</span>
+        </div>
+        <div class="tooltip" id="downAmt">= $6,600 de entrada</div>
+      </div>
+
+      <div class="field">
+        <label>Plazo del crédito</label>
+        <div class="slider-row">
+          <input type="range" id="months" min="12" max="84" value="60" step="12" oninput="syncMonths()">
+          <span class="slider-val" id="monthsVal">60 meses</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tasa de interés anual (%)</label>
+        <div class="slider-row">
+          <input type="range" id="rate" min="5" max="18" value="11" step="0.5" oninput="syncRate()">
+          <span class="slider-val" id="rateVal">11.0%</span>
+        </div>
+        <div class="tooltip">Tasa referencial CFN para vehículos: ~11%</div>
+      </div>
+    </div>
+
+    <!-- GASTOS OPERATIVOS -->
+    <div class="card">
+      <div class="card-title">Gastos mensuales del vehículo</div>
+
+      <div class="field">
+        <label>Gasolina (USD/mes)</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="fuel" class="has-prefix" value="80" min="0" max="500">
+        </div>
+        <div class="tooltip">Estimado: ~60 litros/semana × $1.48 Super (Ecuador)</div>
+      </div>
+
+      <div class="field">
+        <label>Seguro vehicular (USD/mes)</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="insurance" class="has-prefix" value="55" min="0" max="300">
+        </div>
+        <div class="tooltip">Estimado: ~3% del valor del vehículo / año</div>
+      </div>
+
+      <div class="field">
+        <label>Mantenimiento y otros (USD/mes)</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="maintenance" class="has-prefix" value="60" min="0" max="500">
+        </div>
+        <div class="tooltip">Aceite, llantas, lavado, parqueadero, etc.</div>
+      </div>
+
+      <div class="field">
+        <label>Matrícula anual (USD/año)</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="matricula" class="has-prefix" value="150" min="0" max="1000">
+        </div>
+      </div>
+    </div>
+
+    <!-- S&P 500 -->
+    <div class="card">
+      <div class="card-title">
+        Parámetros S&P 500
+        <span class="sp-badge">📈 Índice</span>
+      </div>
+
+      <div class="field">
+        <label>Retorno anual esperado (%)</label>
+        <div class="slider-row">
+          <input type="range" id="spReturn" min="5" max="25" value="14.5" step="0.5" oninput="syncSP()">
+          <span class="slider-val" id="spReturnVal">14.5%</span>
+        </div>
+        <div class="tooltip">Retorno promedio anualizado S&P 500 últimos 5 años (2020–2024): ~14.5%</div>
+      </div>
+
+      <div class="field">
+        <label>Horizonte de comparación</label>
+        <select id="horizon">
+          <option value="60">5 años (= crédito)</option>
+          <option value="120">10 años</option>
+          <option value="180">15 años</option>
+          <option value="240">20 años</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>¿Incluir el valor de entrada en la inversión?</label>
+        <select id="includeDown">
+          <option value="1">Sí — invertir la entrada también</option>
+          <option value="0">No — solo cuotas mensuales</option>
+        </select>
+        <div class="tooltip">Si tuvieras el dinero de la entrada para invertirlo.</div>
+      </div>
+
+    </div>
+
+    <!-- TRANSPORTE ALTERNATIVO -->
+    <div class="card" style="border-color: rgba(64,224,176,0.2);">
+      <div class="card-title" style="color: var(--accent2);">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--accent2);display:inline-block;flex-shrink:0"></span>
+        Transporte sin auto (escenario S&P)
+      </div>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;line-height:1.5;">Si <em>no</em> compras el auto, igual necesitas movilizarte. Estos gastos se descuentan del monto que invertirías en el S&P 500 cada mes.</p>
+
+      <div class="field">
+        <label>Uber / InDriver / taxi (USD/mes)</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="uber" class="has-prefix" value="120" min="0" max="800">
+        </div>
+        <div class="tooltip">Default: ~4 viajes/semana × $7 promedio en Quito/Guayaquil</div>
+      </div>
+
+      <div class="field">
+        <label>Bus / Metro / transporte público (USD/mes)</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="bus" class="has-prefix" value="15" min="0" max="200">
+        </div>
+        <div class="tooltip">Default: ~$0.35/viaje × 2 viajes/día × 22 días hábiles</div>
+      </div>
+
+      <div class="field">
+        <label>Otros (deliveries, taxis especiales, etc.)</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="otherTransport" class="has-prefix" value="20" min="0" max="300">
+        </div>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid rgba(64,224,176,0.15);border-radius:10px;padding:0.75rem 1rem;margin-top:0.5rem;">
+        <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.2rem;text-transform:uppercase;letter-spacing:0.08em;">Total transporte alternativo/mes</div>
+        <div id="altTransportTotal" style="font-family:'Inter',sans-serif;font-weight:600;font-variant-numeric:tabular-nums;font-size:1.1rem;color:var(--accent2);">$155</div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem;">Se resta de lo invertido en S&P cada mes</div>
+      </div>
+    </div>
+
+    <!-- DEPRECIACIÓN -->
+    <div class="card">
+      <div class="card-title">Depreciación y valor residual</div>
+
+      <div class="field">
+        <label>Depreciación anual estimada (%)</label>
+        <div class="slider-row">
+          <input type="range" id="depreciation" min="5" max="25" value="12" step="1" oninput="syncDepr()">
+          <span class="slider-val" id="depreciationVal">12%</span>
+        </div>
+        <div class="tooltip">Promedio Ecuador: 10–15% anual los primeros años</div>
+      </div>
+
+      <div class="field" id="residualDisplay" style="margin-top:0.5rem">
+        <label>Valor residual estimado (después del plazo)</label>
+        <div id="residualVal" style="font-family:'Inter',sans-serif;font-weight:600;font-variant-numeric:tabular-nums;font-size:1.1rem;color:var(--accent);margin-top:0.25rem">$—</div>
+      </div>
+
+      <div class="field" style="margin-top:1rem">
+        <label>Costo de oportunidad total estimado</label>
+        <div id="oppCostDisplay" style="font-family:'Inter',sans-serif;font-weight:600;font-variant-numeric:tabular-nums;font-size:0.85rem;color:var(--muted);margin-top:0.25rem">Calcula para ver</div>
+      </div>
+    </div>
+
+    <button class="btn-calc" onclick="calculate()">→ Calcular comparación</button>
+  </div>
+
+  <!-- ===== RESULTS ===== -->
+  <div class="results-section" id="results">
+
+    <div class="section-sep">Resultado</div>
+
+    <!-- IMPACT STATEMENT -->
+    <div class="impact-banner" id="impactBanner"></div>
+
+    <!-- TWO COLUMN COMPARISON -->
+    <div class="compare-grid">
+      <!-- AUTO COLUMN -->
+      <div class="compare-col compare-col--car">
+        <div class="compare-col-header">
+          <span class="compare-col-icon">🚗</span>
+          <span class="compare-col-label">Si compras el auto</span>
+        </div>
+        <div class="compare-hero-number" id="carHeroNumber"></div>
+        <div class="compare-hero-label" id="carHeroLabel"></div>
+        <div class="compare-metrics" id="carMetrics"></div>
+      </div>
+
+      <!-- DIVIDER -->
+      <div class="compare-vs">
+        <div class="vs-line"></div>
+        <div class="vs-badge">VS</div>
+        <div class="vs-line"></div>
+      </div>
+
+      <!-- SP500 COLUMN -->
+      <div class="compare-col compare-col--sp">
+        <div class="compare-col-header">
+          <span class="compare-col-icon">📈</span>
+          <span class="compare-col-label">Si inviertes en S&P 500</span>
+        </div>
+        <div class="compare-hero-number" id="spHeroNumber"></div>
+        <div class="compare-hero-label" id="spHeroLabel"></div>
+        <div class="compare-metrics" id="spMetrics"></div>
+      </div>
+    </div>
+
+    <!-- DIFFERENCE CALLOUT -->
+    <div class="difference-callout" id="differenceCallout"></div>
+
+    <!-- Chart -->
+    <div class="chart-wrap">
+      <div class="chart-title">Evolución del patrimonio a lo largo del tiempo</div>
+      <canvas id="myChart" height="260"></canvas>
+    </div>
+
+    <!-- Breakdown table -->
+    <div class="breakdown">
+      <div class="chart-title">Desglose de costos del vehículo</div>
+      <table id="breakdownTable"></table>
+    </div>
+
+    <div class="disclaimer">
+      Esta calculadora es solo para fines educativos e ilustrativos. Los retornos del S&P 500 son históricos y no garantizan resultados futuros. Los costos vehiculares son estimaciones basadas en promedios ecuatorianos. Consulta con un asesor financiero antes de tomar decisiones de inversión.
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ===== CAR DATA =====
+const cars = {
+  suv: [
+    { name: "Chevrolet Groove", price: 22000, icon: "🚙", rank: 1 },
+    { name: "Kia Sonet", price: 24500, icon: "🚙", rank: 2 },
+    { name: "Kia Sportage", price: 32000, icon: "🚙", rank: 3 },
+    { name: "DFSK Glory", price: 18500, icon: "🚙", rank: 4 },
+    { name: "Kia Seltos", price: 27000, icon: "🚙", rank: 5 },
+    { name: "VW T-Cross", price: 29900, icon: "🚙", rank: 6 },
+    { name: "Renault Duster", price: 23500, icon: "🚙", rank: 7 },
+    { name: "Jetour X70", price: 21000, icon: "🚙", rank: 8 },
+    { name: "Hyundai Tucson", price: 34000, icon: "🚙", rank: 9 },
+  ],
+  sedan: [
+    { name: "Kia Soluto", price: 17500, icon: "🚗", rank: 1 },
+    { name: "Chevrolet Joy", price: 14800, icon: "🚗", rank: 2 },
+    { name: "Suzuki Swift", price: 16500, icon: "🚗", rank: 3 },
+    { name: "Hyundai i10", price: 14200, icon: "🚗", rank: 4 },
+    { name: "Chery Arrizo", price: 16900, icon: "🚗", rank: 5 },
+    { name: "Kia Picanto", price: 12900, icon: "🚗", rank: 6 },
+    { name: "Chevrolet Onix", price: 19500, icon: "🚗", rank: 7 },
+    { name: "Kia K3", price: 21000, icon: "🚗", rank: 8 },
+  ],
+  camioneta: [
+    { name: "Chevrolet D-Max", price: 38000, icon: "🛻", rank: 1 },
+    { name: "GWM Poer", price: 29000, icon: "🛻", rank: 2 },
+    { name: "Toyota Hilux", price: 42000, icon: "🛻", rank: 3 },
+    { name: "GWM Wingle", price: 26500, icon: "🛻", rank: 4 },
+    { name: "Ford Ranger", price: 40000, icon: "🛻", rank: 5 },
+  ]
+};
+
+let selectedCar = null;
+let currentSegment = 'suv';
+let chartInstance = null;
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('es-EC');
+}
+
+function filterCars(segment) {
+  currentSegment = segment;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderCarGrid(segment);
+}
+
+function renderCarGrid(segment) {
+  const grid = document.getElementById('carGrid');
+  grid.innerHTML = '';
+  cars[segment].forEach(car => {
+    const el = document.createElement('div');
+    el.className = 'car-card' + (selectedCar && selectedCar.name === car.name ? ' selected' : '');
+    el.innerHTML = `<div class="car-icon">${car.icon}</div><div class="car-name">${car.name}</div><div class="car-price">${fmt(car.price)}</div>`;
+    el.onclick = () => selectCar(car, el);
+    grid.appendChild(el);
+  });
+}
+
+function selectCar(car, el) {
+  document.querySelectorAll('.car-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCar = car;
+  document.getElementById('carPrice').value = car.price;
+  syncPrice(); syncDown();
+  // Auto-set insurance ~3% of price per year / 12
+  document.getElementById('insurance').value = Math.round(car.price * 0.03 / 12);
+}
+
+function syncAltTransport() {
+  const uber = +document.getElementById('uber').value || 0;
+  const bus = +document.getElementById('bus').value || 0;
+  const other = +document.getElementById('otherTransport').value || 0;
+  document.getElementById('altTransportTotal').textContent = fmt(uber + bus + other);
+}
+
+// ===== SYNC FUNCTIONS =====
+function syncPrice() {
+  syncDown();
+  updateResidual();
+}
+
+function syncDown() {
+  const pct = +document.getElementById('downPct').value;
+  const price = +document.getElementById('carPrice').value;
+  document.getElementById('downPctVal').textContent = pct + '%';
+  document.getElementById('downAmt').textContent = '= ' + fmt(price * pct / 100) + ' de entrada';
+  updateResidual();
+}
+
+function syncMonths() {
+  const m = +document.getElementById('months').value;
+  document.getElementById('monthsVal').textContent = m + ' meses';
+  const horizon = document.getElementById('horizon');
+  horizon.options[0].text = `${m} meses (= crédito)`;
+  horizon.options[0].value = m;
+  updateResidual();
+}
+
+function syncRate() {
+  document.getElementById('rateVal').textContent = (+document.getElementById('rate').value).toFixed(1) + '%';
+}
+
+function syncSP() {
+  document.getElementById('spReturnVal').textContent = (+document.getElementById('spReturn').value).toFixed(1) + '%';
+}
+
+function syncDepr() {
+  document.getElementById('depreciationVal').textContent = document.getElementById('depreciation').value + '%';
+  updateResidual();
+}
+
+function updateResidual() {
+  const price = +document.getElementById('carPrice').value;
+  const deprPct = +document.getElementById('depreciation').value / 100;
+  const months = +document.getElementById('months').value;
+  const years = months / 12;
+  const residual = price * Math.pow(1 - deprPct, years);
+  document.getElementById('residualVal').textContent = fmt(residual);
+}
+
+// ===== CALCULATE =====
+function calculate() {
+  const price = +document.getElementById('carPrice').value;
+  const downPct = +document.getElementById('downPct').value / 100;
+  const months = +document.getElementById('months').value;
+  const annualRate = +document.getElementById('rate').value / 100;
+  const fuel = +document.getElementById('fuel').value;
+  const insurance = +document.getElementById('insurance').value;
+  const maint = +document.getElementById('maintenance').value;
+  const matricula = +document.getElementById('matricula').value;
+  const spAnnual = +document.getElementById('spReturn').value / 100;
+  const horizon = +document.getElementById('horizon').value;
+  const includeDown = +document.getElementById('includeDown').value;
+  const deprPct = +document.getElementById('depreciation').value / 100;
+  const altTransport = (+document.getElementById('uber').value || 0)
+                     + (+document.getElementById('bus').value || 0)
+                     + (+document.getElementById('otherTransport').value || 0);
+
+  const downPayment = price * downPct;
+  const loanAmt = price - downPayment;
+  const monthlyRate = annualRate / 12;
+
+  // Monthly payment (cuota)
+  const cuota = loanAmt * (monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+
+  // Total car monthly cost
+  const totalMonthly = cuota + fuel + insurance + maint + (matricula / 12);
+
+  // S&P monthly investment = what you'd spend on the car MINUS what you'd spend anyway on transport
+  const spMonthlyInvest = Math.max(0, totalMonthly - altTransport);
+
+  // ---- Car path: total outlay ----
+  const totalLoanPaid = cuota * months;
+  const totalInterest = totalLoanPaid - loanAmt;
+  const totalOpEx = (fuel + insurance + maint) * horizon + (matricula / 12) * horizon;
+  const residualYears = horizon / 12;
+  const residualValue = price * Math.pow(1 - deprPct, residualYears);
+
+  // Net car cost = down + cuotas (if horizon >= months, else partial) + opEx - residual
+  const loanMonths = Math.min(months, horizon);
+  const paidLoanTotal = cuota * loanMonths;
+  const totalCarCost = (includeDown ? downPayment : 0) + paidLoanTotal + totalOpEx - residualValue;
+
+  // ---- S&P path ----
+  const spMonthly = spAnnual / 12;
+  let spPortfolio = includeDown ? downPayment : 0;
+  const spPortfolioHistory = [];
+  const carNetHistory = [];
+
+  // Build month-by-month history
+  for (let m = 1; m <= horizon; m++) {
+    // S&P grows + add net monthly savings (car cost - alt transport)
+    spPortfolio = spPortfolio * (1 + spMonthly) + spMonthlyInvest;
+
+    // Car net value = residual value at month m - remaining loan (if any)
+    const carResidual = price * Math.pow(1 - deprPct, m / 12);
+    const remainingLoan = m < months ? loanAmt * Math.pow(1 + monthlyRate, months - m) - (cuota * (Math.pow(1 + monthlyRate, months - m) - 1) / monthlyRate) : 0;
+    const carNet = carResidual - remainingLoan;
+
+    spPortfolioHistory.push(spPortfolio);
+    carNetHistory.push(Math.max(0, carNet));
+  }
+
+  const finalSP = spPortfolio;
+  const finalCarResidual = residualValue;
+  const difference = finalSP - finalCarResidual;
+
+  // ---- Render ----
+  document.getElementById('results').classList.add('visible');
+
+  // Verdict bar (kept for compat, hidden)
+  const spPct = Math.round((finalSP / (finalSP + finalCarResidual)) * 100);
+  const winnerText = difference > 0 ? `S&P 500 gana por ${fmt(difference)}` : `Auto gana por ${fmt(Math.abs(difference))}`;
+
+  const horizonYears = horizon / 12;
+  const deprLabel = document.getElementById('depreciation').value;
+
+  // ---- IMPACT BANNER ----
+  const impactBanner = document.getElementById('impactBanner');
+  if (difference > 0) {
+    const multiplier = (finalSP / finalCarResidual).toFixed(1);
+    impactBanner.innerHTML = `
+      <div class="impact-eyebrow">Tu dinero trabajando por ti · ${horizonYears} años</div>
+      <div class="impact-headline">
+        Si en lugar de comprar el auto invirtieras ese dinero mensualmente en el S&P 500,
+        terminarías con <em class="sp-hl">${fmt(finalSP)}</em> —
+        <em>${multiplier}× más</em> que el valor residual del carro.
+      </div>`;
+  } else {
+    impactBanner.innerHTML = `
+      <div class="impact-eyebrow">Análisis financiero · ${horizonYears} años</div>
+      <div class="impact-headline">
+        En este escenario, el auto conserva más valor que tu portafolio S&P 500.
+        El transporte alternativo reduce demasiado lo que podrías invertir cada mes.
+      </div>`;
+  }
+
+  // ---- CAR COLUMN ----
+  document.getElementById('carHeroNumber').textContent = fmt(finalCarResidual);
+  document.getElementById('carHeroLabel').textContent = `Lo que vale tu auto en ${horizonYears} año${horizonYears > 1 ? 's' : ''} (valor de reventa estimado)`;
+  document.getElementById('carMetrics').innerHTML = `
+    <div class="cmetric"><span class="cmetric-label">Precio original</span><span class="cmetric-value neu">${fmt(price)}</span></div>
+    <div class="cmetric"><span class="cmetric-label">Entrada pagada</span><span class="cmetric-value neg">−${fmt(price * downPct)}</span></div>
+    <div class="cmetric"><span class="cmetric-label">Cuota mensual</span><span class="cmetric-value neg">−${fmt(cuota)}/mes</span></div>
+    <div class="cmetric"><span class="cmetric-label">Intereses totales al banco</span><span class="cmetric-value neg">−${fmt(totalInterest)}</span></div>
+    <div class="cmetric"><span class="cmetric-label">Gasolina + seguro + mant.</span><span class="cmetric-value neg">−${fmt((fuel+insurance+maint)*horizon)}</span></div>
+    <div class="cmetric"><span class="cmetric-label">Gasto mensual total</span><span class="cmetric-value neg">−${fmt(totalMonthly)}/mes</span></div>
+    <div class="cmetric"><span class="cmetric-label">Depreciación anual</span><span class="cmetric-value neg">−${deprLabel}%/año</span></div>
+  `;
+
+  // ---- SP COLUMN ----
+  document.getElementById('spHeroNumber').textContent = fmt(finalSP);
+  document.getElementById('spHeroLabel').textContent = `Tu portafolio en ${horizonYears} año${horizonYears > 1 ? 's' : ''} invirtiendo lo que gastarías en el auto`;
+  document.getElementById('spMetrics').innerHTML = `
+    <div class="cmetric"><span class="cmetric-label">Inversión mensual neta</span><span class="cmetric-value pos">+${fmt(spMonthlyInvest)}/mes</span></div>
+    <div class="cmetric"><span class="cmetric-label">Transporte alternativo</span><span class="cmetric-value neg">−${fmt(altTransport)}/mes</span></div>
+    <div class="cmetric"><span class="cmetric-label">Retorno anual esperado</span><span class="cmetric-value pos">+${document.getElementById('spReturn').value}%/año</span></div>
+    <div class="cmetric"><span class="cmetric-label">Total invertido (capital)</span><span class="cmetric-value neu">${fmt(spMonthlyInvest * horizon + (includeDown ? price * downPct : 0))}</span></div>
+    <div class="cmetric"><span class="cmetric-label">Ganancia por interés compuesto</span><span class="cmetric-value pos">+${fmt(finalSP - spMonthlyInvest * horizon - (includeDown ? price * downPct : 0))}</span></div>
+  `;
+
+  // ---- DIFFERENCE CALLOUT ----
+  const dc = document.getElementById('differenceCallout');
+  if (difference > 0) {
+    const totalSpent = (includeDown ? price * downPct : 0) + cuota * loanMonths + (fuel+insurance+maint)*horizon + (matricula/12)*horizon;
+    dc.style.borderColor = 'rgba(80,250,123,0.4)';
+    dc.style.background = 'linear-gradient(135deg, rgba(80,250,123,0.06) 0%, rgba(80,250,123,0.02) 100%)';
+    dc.innerHTML = `
+      <div class="diff-label" style="color:var(--green)">La diferencia — lo que te estás perdiendo</div>
+      <div class="diff-number" style="color:var(--green)">${fmt(difference)}</div>
+      <div class="diff-message" style="color:var(--text2)">
+        Eso es exactamente lo que <strong style="color:var(--text)">dejarías de ganar</strong> en ${horizonYears} años si eliges el auto en lugar de invertir.
+        No es solo el precio del carro — es el precio del carro <em>más</em> todos los intereses, la gasolina, el seguro, el mantenimiento,
+        y el costo de oportunidad de no tener ese dinero trabajando para ti en el mercado.
+        <br><br>
+        <strong style="color:var(--accent)">El auto te cuesta dinero. El S&P 500 te genera dinero.</strong>
+      </div>`;
+  } else {
+    dc.style.borderColor = 'rgba(255,85,85,0.4)';
+    dc.style.background = 'linear-gradient(135deg, rgba(255,85,85,0.06) 0%, rgba(255,85,85,0.02) 100%)';
+    dc.innerHTML = `
+      <div class="diff-label" style="color:var(--red)">En este escenario</div>
+      <div class="diff-number" style="color:var(--red)">${fmt(Math.abs(difference))}</div>
+      <div class="diff-message" style="color:var(--text2)">
+        El auto conserva <strong style="color:var(--text)">${fmt(Math.abs(difference))} más</strong> que tu portafolio en este escenario,
+        principalmente porque el alto costo del transporte alternativo reduce mucho lo que podrías invertir cada mes.
+        Prueba bajando los gastos de Uber/taxi o aumentando el horizonte de inversión para ver cómo cambia el resultado.
+      </div>`;
+  }
+
+  // Chart — use real month indices for tooltip
+  const labels = Array.from({ length: horizon }, (_, i) => i + 1);
+
+  if (chartInstance) { chartInstance.destroy(); }
+  const ctx = document.getElementById('myChart').getContext('2d');
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Portafolio S&P 500',
+          data: spPortfolioHistory,
+          borderColor: '#50fa7b',
+          backgroundColor: 'rgba(80,250,123,0.06)',
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0,
+        },
+        {
+          label: 'Valor neto del auto',
+          data: carNetHistory,
+          borderColor: '#ff5555',
+          backgroundColor: 'rgba(255,85,85,0.05)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: { color: '#b0b0c8', font: { family: 'Inter', size: 11 }, boxWidth: 12 }
+        },
+        tooltip: {
+          backgroundColor: '#13131c',
+          borderColor: '#2a2a3d',
+          borderWidth: 1,
+          titleColor: '#e8e8f0',
+          bodyColor: '#b0b0c8',
+          padding: 12,
+          callbacks: {
+            title: items => {
+              const m = items[0].dataIndex + 1;
+              const yr = Math.floor(m / 12);
+              const mo = m % 12;
+              let str = `Mes ${m}`;
+              if (yr > 0) str += ` · Año ${yr}${mo > 0 ? `, mes ${mo}` : ''}`;
+              return str;
+            },
+            label: ctx => ` ${ctx.dataset.label}: $${Math.round(ctx.parsed.y).toLocaleString('es-EC')}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#6e6e8a',
+            font: { family: 'Inter', size: 10 },
+            maxRotation: 0,
+            callback: (val, idx) => {
+              const m = idx + 1;
+              return m % 12 === 0 ? `Año ${m/12}` : (m === 1 ? 'Mes 1' : '');
+            }
+          },
+          grid: { color: 'rgba(42,42,61,0.4)' }
+        },
+        y: {
+          ticks: {
+            color: '#6e6e8a',
+            font: { family: 'Inter', size: 10 },
+            callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v)
+          },
+          grid: { color: 'rgba(42,42,61,0.4)' }
+        }
+      }
+    }
+  });
+
+  // Breakdown table
+  const bt = document.getElementById('breakdownTable');
+  const rows = [
+    ['Precio del vehículo', fmt(price), ''],
+    ['Entrada pagada', fmt(downPayment), 'td-red'],
+    ['Capital financiado', fmt(loanAmt), ''],
+    ['Total cuotas pagadas', fmt(cuota * loanMonths), 'td-red'],
+    ['  · Intereses bancarios', fmt(totalInterest), 'td-red'],
+    ['Gasolina total', fmt(fuel * horizon), 'td-red'],
+    ['Seguro total', fmt(insurance * horizon), 'td-red'],
+    ['Mantenimiento total', fmt(maint * horizon), 'td-red'],
+    ['Matrícula total', fmt((matricula/12) * horizon), 'td-red'],
+    ['Valor residual (recuperado)', fmt(residualValue), 'td-green'],
+    ['COSTO NETO TOTAL', fmt(totalCarCost), 'td-red'],
+  ];
+  bt.innerHTML = `<tr><th>Concepto</th><th style="text-align:right">Monto</th></tr>` +
+    rows.map(([label, val, cls]) => `<tr><td>${label}</td><td class="${cls}">${val}</td></tr>`).join('');
+
+  document.getElementById('oppCostDisplay').textContent = `${fmt(Math.abs(difference))} en ${horizon/12} años (${difference > 0 ? 'S&P gana' : 'auto gana'})`;
+
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ===== INIT =====
+renderCarGrid('suv');
+syncDown();
+syncRate();
+syncSP();
+syncDepr();
+syncAltTransport();
+updateResidual();
+
+// Wire alt transport inputs
+['uber','bus','otherTransport'].forEach(id => {
+  document.getElementById(id).addEventListener('input', syncAltTransport);
+});
+</script>
+
+<!-- ===== SOURCES ===== -->
+<div class="container" style="padding-top:0">
+  <div class="section-sep" style="margin-top:2.5rem">Fuentes de datos</div>
+  <div class="card" style="margin-bottom:2rem">
+    <div class="card-title">Referencias utilizadas para construir esta calculadora</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;">
+
+      <a href="https://motores.eluniverso.com/2025/01/24/top-10-de-los-vehiculos-mas-vendidos-en-ecuador-por-segmento-en-2024/" target="_blank" class="source-card">
+        <div class="source-icon">📊</div>
+        <div>
+          <div class="source-title">Top 10 vehículos más vendidos en Ecuador 2024</div>
+          <div class="source-org">El Universo · Motores</div>
+          <div class="source-desc">Ranking por segmento (SUV, sedán, camionetas) con unidades vendidas. Base para los modelos y precios del selector.</div>
+        </div>
+      </a>
+
+      <a href="https://www.primicias.ec/noticias/economia/carros-ventas-ecuador-modelos2023-marcas/" target="_blank" class="source-card">
+        <div class="source-icon">🚗</div>
+        <div>
+          <div class="source-title">Carros preferidos por los ecuatorianos en 2023</div>
+          <div class="source-org">Primicias.ec</div>
+          <div class="source-desc">Análisis de ventas por segmento, rangos de precios (SUV $20k–$30k) y participación de marcas en el mercado ecuatoriano.</div>
+        </div>
+      </a>
+
+      <a href="https://www.primicias.ec/economia/carros-vendidos-ecuador-hibridos-marcas-chinas-86889/" target="_blank" class="source-card">
+        <div class="source-icon">🔋</div>
+        <div>
+          <div class="source-title">Carros más vendidos en Ecuador 2024 e híbridos</div>
+          <div class="source-org">Primicias.ec</div>
+          <div class="source-desc">Contexto del mercado 2024: caída del 18%, auge de híbridos, y datos de la AEADE sobre tendencias de consumo.</div>
+        </div>
+      </a>
+
+      <a href="https://www.aeade.net/" target="_blank" class="source-card">
+        <div class="source-icon">🏛️</div>
+        <div>
+          <div class="source-title">AEADE — Asociación de Empresas Automotrices del Ecuador</div>
+          <div class="source-org">aeade.net</div>
+          <div class="source-desc">Fuente primaria de estadísticas del mercado automotor ecuatoriano. Informes anuales y mensuales de ventas.</div>
+        </div>
+      </a>
+
+      <a href="https://www.macrotrends.net/2526/sp-500-historical-annual-returns" target="_blank" class="source-card">
+        <div class="source-icon">📈</div>
+        <div>
+          <div class="source-title">S&P 500 — Retornos históricos anuales</div>
+          <div class="source-org">Macrotrends.net</div>
+          <div class="source-desc">Historial de retornos del índice. Base del default del 14.5% anual (promedio 2020–2024 incluyendo el rebote post-COVID).</div>
+        </div>
+      </a>
+
+      <a href="https://www.finanzas.gob.ec/tasas-de-interes/" target="_blank" class="source-card">
+        <div class="source-icon">🏦</div>
+        <div>
+          <div class="source-title">Tasas de interés referenciales — Ecuador</div>
+          <div class="source-org">Ministerio de Finanzas / BCE</div>
+          <div class="source-desc">Tasas activas para crédito vehicular en Ecuador. Base para el default del 11% anual usado en la calculadora.</div>
+        </div>
+      </a>
+
+    </div>
+
+    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.75rem;color:var(--muted);line-height:1.7">
+      <strong style="color:var(--text2)">Metodología:</strong> Los precios de los vehículos son valores de referencia de mercado basados en listas de concesionarias en Ecuador (2024). La depreciación del 12% anual es un promedio para vehículos de uso particular en Ecuador. El gasto en transporte alternativo ($155/mes) es una estimación para ciudades como Quito o Guayaquil. Los retornos del S&P 500 son históricos y <strong style="color:var(--text2)">no garantizan resultados futuros.</strong>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
